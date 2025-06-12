@@ -10,7 +10,7 @@ import { authenticate } from "../middlewares/authenticate";
 
 const router = Router();
 
-router.use(authenticate); // all routes below require auth
+router.use(authenticate); 
 
 router.post("/", createTask);
 router.get("/", getTasks);
