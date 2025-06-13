@@ -12,7 +12,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // your React frontend origin
+    origin: "http://localhost:5173", 
     credentials: true, // to allow cookies (e.g. for JWT)
   })
 );
