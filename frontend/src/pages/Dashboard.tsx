@@ -120,83 +120,144 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="max-w-xl mx-auto mt-10">
-      <h2 className="text-3xl font-bold mb-6">Pomodoro Task Tracker</h2>
+    <div className="max-w-2xl mx-auto p-6">
+      <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+        <h2 className="text-3xl font-bold mb-6 text-primary-800 text-center">
+          Pomodoro Focus
+        </h2>
 
-      <div className="mb-8 text-center">
-        <h1 className="text-2xl font-bold mb-2">
-          {mode === "work" ? "Focus Time 🧠" : "Break Time ☕"}
-        </h1>
-        <div className="text-6xl font-mono mb-4">{formatTime(secondsLeft)}</div>
-        <div className="space-x-2">
-          {!isRunning ? (
-            <button
-              onClick={start}
-              className="px-4 py-2 bg-green-600 text-white rounded"
-            >
-              Start
-            </button>
-          ) : (
-            <button
-              onClick={pause}
-              className="px-4 py-2 bg-yellow-500 text-white rounded"
-            >
-              Pause
-            </button>
-          )}
-          <button
-            onClick={reset}
-            className="px-4 py-2 bg-gray-500 text-white rounded"
+        {/* Timer Section */}
+        <div
+          className={`mb-8 text-center p-6 rounded-lg ${
+            mode === "work" ? "bg-primary-100" : "bg-secondary-100"
+          }`}
+        >
+          <h1 className="text-2xl font-semibold mb-4 text-primary-800">
+            {mode === "work" ? "Focus Time 🧠" : "Break Time ☕"}
+          </h1>
+          <div
+            className={`text-7xl font-mono mb-6 font-bold ${
+              mode === "work" ? "text-primary-600" : "text-secondary-600"
+            }`}
           >
-            Reset
+            {formatTime(secondsLeft)}
+          </div>
+          <div className="flex justify-center space-x-4">
+            {!isRunning ? (
+              <button
+                onClick={start}
+                className="px-6 py-3 bg-teal-500 hover:bg-teal-600 text-white rounded-lg font-medium transition-colors shadow-md"
+              >
+                Start
+              </button>
+            ) : (
+              <button
+                onClick={pause}
+                className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors shadow-md"
+              >
+                Pause
+              </button>
+            )}
+            <button
+              onClick={reset}
+              className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors shadow-md"
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+
+        {/* Task Input */}
+        <div className="flex space-x-3 mb-8">
+          <input
+            type="text"
+            placeholder="What are you working on?"
+            value={newTask}
+            onChange={(e) => setNewTask(e.target.value)}
+            onKeyPress={(e) => e.key === "Enter" && addTask()}
+            className="flex-1 border border-[#99f6e4] focus:border-[#14b8a6] focus:ring-2 focus:ring-[#99f6e4] rounded-lg px-4 py-2 outline-none transition-all"
+          />
+          <button
+            onClick={addTask}
+            className="bg-[#0ea5e9] hover:bg-[#0284c7] text-white px-6 py-2 rounded-lg font-medium transition-colors shadow-md"
+          >
+            Add Task
           </button>
         </div>
-      </div>
 
-      <div className="flex space-x-2 mb-6">
-        <input
-          type="text"
-          placeholder="New Task"
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-          className="flex-1 border p-2 rounded"
-        />
-        <button
-          onClick={addTask}
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          Add
-        </button>
+        {/* Task List */}
+        <div>
+          <h3 className="text-xl font-semibold mb-4 text-primary-800">
+            Your Tasks
+          </h3>
+          {tasks.length === 0 ? (
+            <p className="text-gray-500 italic">No tasks yet. Add one above!</p>
+          ) : (
+            <ul className="space-y-3">
+              {tasks.map((task) => (
+                <li
+                  key={task._id}
+                  className="flex items-center justify-between bg-white border border-primary-100 hover:border-primary-200 p-4 rounded-lg transition-all shadow-sm"
+                >
+                  <div className="flex items-center space-x-3 flex-1">
+                    <button
+                      onClick={() => toggleComplete(task._id, task.completed)}
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                        task.completed
+                          ? "bg-primary-500 border-primary-500"
+                          : "border-primary-300"
+                      }`}
+                    >
+                      {task.completed && (
+                        <svg
+                          className="w-3 h-3 text-white"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                    <span
+                      className={`flex-1 ${
+                        task.completed
+                          ? "line-through text-gray-400"
+                          : "text-primary-800"
+                      }`}
+                    >
+                      {task.title}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => deleteTask(task._id)}
+                    className="text-gray-400 hover:text-accent-500 transition-colors p-1"
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
-
-      <ul className="space-y-2">
-        {tasks.map((task) => (
-          <li
-            key={task._id}
-            className="flex items-center justify-between border p-2 rounded"
-          >
-            <span
-              className={`flex-1 ${
-                task.completed ? "line-through text-gray-500" : ""
-              }`}
-            >
-              {task.title}
-            </span>
-            <button
-              onClick={() => toggleComplete(task._id, task.completed)}
-              className="text-sm text-green-600"
-            >
-              {task.completed ? "Undo" : "Done"}
-            </button>
-            <button
-              onClick={() => deleteTask(task._id)}
-              className="text-sm text-red-600 ml-4"
-            >
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 };
